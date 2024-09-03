@@ -1,6 +1,9 @@
+extern crate core;
+
 mod opts;
 
 use clap::{Parser};
+use zxcvbn::zxcvbn;
 use rcli::{process_csv, process_genpass, SubCommand};
 use rcli::Opts;
 
@@ -23,6 +26,8 @@ fn main() -> anyhow::Result<()> {
                 opts.number,
                 opts.symbol)?;
             println!("{}", ret);
+            let estimate = zxcvbn(&ret, &[]);
+            eprintln!("Password strength: {}", estimate.score());
         }
     }
     Ok(())
