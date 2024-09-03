@@ -14,10 +14,12 @@ pub struct Opts {
 #[derive(Debug, Parser)]
 pub enum SubCommand {
     #[command(name = "csv", about = "Convert CSV to JSON")]
-    Csv(CsvOpts)
+    Csv(CsvOpts),
+    #[command(name = "genpass", about = "Generate a random password")]
+    GenPass(GenPassOpts)
 }
 
-#[derive(Parser, Debug, Copy)]
+#[derive(Clone, Debug, Copy)]
 pub enum OutputFormat {
     Json,
     Yaml,
@@ -29,7 +31,7 @@ pub struct CsvOpts {
     pub input: String,
 
     #[arg(short, long, default_value = "output.json")]
-    pub output: String,
+    pub output: Option<String>,
 
     #[arg(short, long, default_value = "json", value_parser = parse_format)]
     pub format: OutputFormat,
@@ -39,6 +41,24 @@ pub struct CsvOpts {
 
     #[arg(long, default_value_t = true)]
     pub header: bool,
+}
+
+#[derive(Debug, Parser)]
+pub struct GenPassOpts {
+    #[arg(short, long, default_value_t = 16)]
+    pub length: u8,
+
+    #[arg(long, default_value_t = true)]
+    pub uppercase: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub lowercase: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub number: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub symbol: bool,
 }
 
 pub fn verify_input_file(filename: &str) -> Result<String, &'static str> {
@@ -65,7 +85,7 @@ impl From<OutputFormat> for &'static str {
 impl FromStr for OutputFormat {
     type Err = anyhow::Error;
 
-    fn from_str(value: &str) -> Result<Self, Self::Error> {
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value.to_lowercase().as_str() {
             "json" => Ok(OutputFormat::Json),
             "yaml" => Ok(OutputFormat::Yaml),
