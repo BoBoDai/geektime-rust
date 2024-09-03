@@ -1,10 +1,9 @@
 extern crate core;
 
-mod opts;
-
+mod cli;
 use clap::{Parser};
 use zxcvbn::zxcvbn;
-use rcli::{process_csv, process_genpass, SubCommand};
+use rcli::{process_csv, process_genpass, Base64SubCommand, SubCommand};
 use rcli::Opts;
 
 fn main() -> anyhow::Result<()> {
@@ -28,6 +27,16 @@ fn main() -> anyhow::Result<()> {
             println!("{}", ret);
             let estimate = zxcvbn(&ret, &[]);
             eprintln!("Password strength: {}", estimate.score());
+        }
+        SubCommand::Base64(opts) => {
+            match opts {
+                Base64SubCommand::Encode(opts) => {
+                    println!("encode: {:?}", opts);
+                }
+                Base64SubCommand::Decode(opts) => {
+                    println!("decode: {:?}", opts);
+                }
+            }
         }
     }
     Ok(())
