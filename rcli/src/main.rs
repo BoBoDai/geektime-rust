@@ -3,7 +3,7 @@ extern crate core;
 mod cli;
 use clap::{Parser};
 use zxcvbn::zxcvbn;
-use rcli::{process_csv, process_genpass, Base64SubCommand, SubCommand};
+use rcli::{process_csv, process_decode, process_encode, process_genpass, Base64SubCommand, SubCommand};
 use rcli::Opts;
 
 fn main() -> anyhow::Result<()> {
@@ -31,10 +31,10 @@ fn main() -> anyhow::Result<()> {
         SubCommand::Base64(opts) => {
             match opts {
                 Base64SubCommand::Encode(opts) => {
-                    println!("encode: {:?}", opts);
+                    process_encode(&opts.input, opts.format)?;
                 }
                 Base64SubCommand::Decode(opts) => {
-                    println!("decode: {:?}", opts);
+                    process_decode(&opts.input, opts.format)?;
                 }
             }
         }
