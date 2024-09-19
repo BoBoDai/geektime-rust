@@ -34,10 +34,14 @@ fn main() -> anyhow::Result<()> {
         SubCommand::Base64(opts) => {
             match opts {
                 Base64SubCommand::Encode(opts) => {
-                    process_encode(&opts.input, opts.format)?;
+                    let mut  reader = get_reader(&opts.input)?;
+                    let ret = process_encode(&mut reader, opts.format)?;
+                    println!("{}", ret);
                 }
                 Base64SubCommand::Decode(opts) => {
-                    process_decode(&opts.input, opts.format)?;
+                    let mut reader = get_reader(&opts.input)?;
+                    let ret = process_decode(&mut reader, opts.format)?;
+                    println!("{}", ret);
                 }
             }
         }
